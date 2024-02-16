@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dashboard</title>
+
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #languageDropdown {
+            margin-left: auto;
+            padding: 5px;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .language-options {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        
+
+        body {
+            -webkit-text-size-adjust: 100%;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f9fa; /* Updated background color */
+        }
+
+        .navbar {
+            background-color: #007bff;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            z-index: 3;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+
+        .navbar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: fixed;
+            height: 100%;
+            margin-left: -1030px;
+            margin-top: 65px;
+            float: left;
+        }
+
+        .navigation {
+            margin-top: 20px;
+        }
+
+        .nav-link {
+            margin-bottom: 10px;
+            font-size: 18px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .dashboard-container {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 100px;
+            margin-left: 147px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .light-mode {
+            background-color: #e0e0e0;
+        }
+
+        .dark-mode {
+            background-color: #424242;
+            color: white;
+        }
+
+        #themeToggleBtn {
+            font-size: 20px;
+            position: relative;
+            z-index: 2;
+            margin-right:-800px;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .chart-wrapper {
+            flex: 0 0 calc(48% - 10px);
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        canvas {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+
+        h2,
+        h3 {
+            margin-bottom: 10px;
+            color:blueviolet;
+        }
+
+        #sectorChartContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            height: calc(100vh - 100px);
+        }
+
+        #sectorChart {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 5px;
+            height: 100%;
+        }
+
+        #applyButton {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #countryDropdown {
+            margin-top: 10px;
+            z-index: 1;
+        }
+
+        .chart-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-width {
+            max-width: 800px;
+            max-height: 500px;
+            margin-bottom: 20px;
+        }
+    </style>
+    {% load static %}
+    <script src="{% static 'javascript/dashboard.js' %}"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <span class="navbar-brand">Analytics</span>
+       
+        
+        <button id="themeToggleBtn" onclick="toggleTheme()" title="Dark/white theme">🌞</button>
+        <img src="{% static 'images/photo.jpg' %}" alt="Your Photo">
+    </nav>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="navigation">
+            <a class="nav-link" href="#">Home</a>
+            <a class="nav-link" href="#">Charts</a>
+            <a class="nav-link" href="#">Analytics</a>
+            <a class="nav-link" href="#">Settings</a>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Chart Containers -->
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <h3>Intensity Chart:</h3>
+                <canvas id="intensityChart" class="chart-width"></canvas>
+            </div>
+
+            <div class="chart-wrapper">
+                <h3>Likelihood Chart (region) 1:</h3>
+                <canvas id="regionChart"></canvas>
+            </div>
+
+            <div class="chart-wrapper">
+                <h3>Likelihood Chart 2:</h3>
+                <canvas id="likelihoodChart"></canvas>
+            </div>
+
+            <div class="chart-wrapper">
+                <h2>Relevance Chart:</h2>
+                <canvas id="relevanceChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+
+        <!-- Country Chart -->
+        <div class="drop">
+            <h2>Sector Distribution Chart:</h2>
+            <h6>Select the country to get the sector distribution</h6>
+            <select id="countryDropdown"></select>
+            <input type="button" value="Apply" onclick="updateChart()" id="applyButton">
+        </div>
+        <div id="sectorChartContainer">
+            <div class="chart-wrapper">
+                <canvas id="sectorChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional, if you want to use Bootstrap features) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function toggleTheme() {
+            var body = document.body;
+            body.classList.toggle('dark-mode');
+
+            var themeToggleBtn = document.getElementById('themeToggleBtn');
+            var isDarkMode = body.classList.contains('dark-mode');
+            themeToggleBtn.title = isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme';
+        }
+
+        function toggleTheme() {
+            var body = document.body;
+            body.classList.toggle('dark-mode');
+
+            var themeToggleBtn = document.getElementById('themeToggleBtn');
+            var isDarkMode = body.classList.contains('dark-mode');
+            themeToggleBtn.title = isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme';
+        }
+    </script>
+</body>
+
+</html>
